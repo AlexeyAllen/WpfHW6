@@ -7,12 +7,11 @@ using System.Windows;
 
 namespace WpfHW6
 {
-    public class WheatherControl : DependencyObject
+    class WheatherControl : DependencyObject
     {
+        public static readonly DependencyProperty TemperatureProperty;
         string[] windDirection = { "Северный", "Южный", "Восточный", "Западный" };
         Random random = new Random();
-
-        public static readonly DependencyProperty.TemperatureProperty;
 
         public enum Precipitations
         {
@@ -25,20 +24,54 @@ namespace WpfHW6
         public int Temperature
         {
             get => (int)GetValue(TemperatureProperty);
-            set => SetValue(TemperatureProperty);
+            set => SetValue(TemperatureProperty, value);
         }
 
+        static WheatherControl()
+        {
+            TemperatureProperty = DependencyProperty.Register(
+                nameof(Temperature),
+                typeof(int),
+                typeof(WheatherControl),
+                new FrameworkPropertyMetadata(
+                    0,
+                    FrameworkPropertyMetadataOptions.None,
+                    null,
+                    new CoerceValueCallback(CoerceTemperature)),
+                new ValidateValueCallback(ValidateTemperature));
+        }
 
+        private static bool ValidateTemperature(object value)
+        {
+            int v = (int)value;
+            if (v >= -50 && v <= 50)
+            {
+                return true;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
 
+        private static object CoerceTemperature(DependencyObject d, object baseValue)
+        {
+            int v = (int)baseValue;
+            if (v>=-50 && v<= 50)
+            {
+                return true;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-
-
-
-        //public string TemperatureRange()
-        //{
-        //    int temperatureRange = random.Next(-50, 50);
-        //    return temperatureRange.ToString();
-        //}
+        public string TemperatureRange()
+        {
+            int temperatureRange = random.Next(-50, 50);
+            return temperatureRange.ToString();
+        }
 
         public string WindDirection()
         {
